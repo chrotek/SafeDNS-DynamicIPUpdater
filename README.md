@@ -12,9 +12,9 @@ We will need:
 
 ### README
 
-#### Setup Instructions
+### Setup Instructions
 
-Create a New API Application
+#### Create a New API Application
 - Log into your [MyUKFast Account](my.ukfast.co.uk)
 - Go to API Applications
 - Click "Register your Application"
