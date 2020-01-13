@@ -24,3 +24,10 @@ We will need:
 - Click "Register Application"
 - Copy the API Token to a safe place <br> ( You won't be able to get a reminder of this later, but you can reset it and get a new token if needed )
 
+#### Set Access Levels for API Application
+- In API Applications, Click the Application
+- Click the API Acces tab
+- Change SafeDNS to Read/Write
+- Click Update Permissions
+
+Clone the repo, set up or alter config etc etc
