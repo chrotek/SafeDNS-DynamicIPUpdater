@@ -26,4 +26,3 @@ We will need:
 
 
 
-X
