@@ -25,7 +25,4 @@ Create a New API Application
 - Copy the API Token to a safe place - You won't be able to get a reminder of this later, but you can reset it and get a new token if needed
 
 
-=======
-  - How often to check & update IP
->>>>>>> 6632f336d3e3676b4518af42f3b98472201ed503
 
