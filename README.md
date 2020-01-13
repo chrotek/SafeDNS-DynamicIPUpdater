@@ -22,5 +22,5 @@ We will need:
 - (Optional) Add a Description
 - Read & Agree to the Terms and Conditions
 - Click "Register Application"
-- Copy the API Token to a safe place - You won't be able to get a reminder of this later, but you can reset it and get a new token if needed
+- Copy the API Token to a safe place <br> You won't be able to get a reminder of this later, but you can reset it and get a new token if needed
 
