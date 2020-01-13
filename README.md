@@ -8,5 +8,5 @@ We will need:
 - A config file with the following information:
   - Full hostnames
   - API Keys
-
+  - How often to check & update IP
 
