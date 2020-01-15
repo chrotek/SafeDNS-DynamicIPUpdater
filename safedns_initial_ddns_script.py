@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import string
-
+import time
 API_TOKEN = "GEL2GLaUYwtZ8px8l675OFeVR0KGheO8;"
-print ("Token : ".format(API_TOKEN))
+print ("Token : "+API_TOKEN)
+time.sleep(10)
 #
 #
 #
