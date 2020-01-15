@@ -7,4 +7,4 @@ echo "Token : "$api_token
 
 
 # List Zones
-curl -X GET https://api.ukfast.io/safedns/v1/zones -H "Authorization: $api_token"
+curl -sX GET https://api.ukfast.io/safedns/v1/zones -H "Authorization: $api_token" | grep -Po '"name":.*?[^\\]",' | cut -f4 -d\"
