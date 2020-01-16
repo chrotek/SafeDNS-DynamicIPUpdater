@@ -6,51 +6,51 @@ import time
 import json
 import requests
 from pick import pick 
+import ast
+import signal
 
+def handler(signum, frame):
+    print ('Exiting on User Instruction')
+    global exitbool
+    exitbool=True
+    exit(0)
+
+global exitbool
+exitbool=False
+signal.signal(signal.SIGINT, handler)
 
 def api_key_write():
     try:
-        f = open("config/apikey","w+")
+        configfile = open("config/apikey","w+")
         api_key = input()
-        f.write(api_key)
-        f.close()
+        configfile.write(api_key)
     except IOError:
         print("Couldn't save API Key")
     finally:
-        f.close()
-
-def api_key_load():
-
-    try:
-        f = open("config/apikey")
-        # Do something with the file
-        print(f.readlines())
-    
-    except IOError:
-        api_key_write()
-    finally:
-        f.close()
-    
-    response=requests.get('https://api.ukfast.io/safedns/v1/zones', headers=api_token)
-    print(response.status_code)
-    if response.status_code == 401:
-        print("API Key Invalid! Please enter a new one and press enter:")
-        api_key_write()
+        configfile.close()
         api_key_load()
 
-api_token= {
-    'Authorization': '---lz2lkW8cmEGSIUhC0JnIkouhhiPYB8WM',
-}
-api_url='https://api.ukfast.io/safedns/v1'
-
-api_key_load()
-
-# API Key functions work, but add extra characters to the key. the below code is fine, just not running becuase i'm teasting the above, i'm going to bed now. nighty night                  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-sys.exit(0)
-
-
-final_record_list = {}
+def api_key_load():
+    global api_key
+    global api_token
+    try:
+        configfile = open("config/apikey","r")
+    except IOError:
+        print("Couldn't read API Key. Please input this and press enter")
+        api_key_write()
+    finally:
+        with open('config/apikey', 'r') as file:
+            api_key = file.read().replace('\n', '')
+    api_token= {
+        'Authorization': api_key,
+    }
+    response=requests.get('https://api.ukfast.io/safedns/v1/zones', headers=api_token)
+    if response.status_code == 401:
+        print("API Key Invalid! Please enter a new one and press enter:")
+        if exitbool == True:
+            exit(0)
+        api_key_write()
+        api_key_load()
 
 def select_domains():
     domain_list = json.loads(json.dumps(requests.get(api_url+"/zones", headers=api_token).json()['data']))
@@ -91,12 +91,42 @@ def select_records():
     print(final_record_list)
     config = json.dumps(final_record_list)
     configfile = open("config/records.json","w+")
-    configfile.write(config)
+    configfile.write( 'records_dict = '+repr(config)+'\n')
     configfile.close()
 
-select_records()
+def check_update_interval():
+    try:
+        configfile = open("config/update_interval","r")
+    except IOError:
+        print("Couldn't read Update Interval. Please input a value in minutes and press enter")
+        write_update_interval()
+    finally:
+        with open('config/update_interval', 'r') as file:
+            update_interval = file.read().replace('\n', '')
+            print("UpdateInterval "+update_interval)
+
+def write_update_interval():
+    try:
+        configfile = open("config/update_interval","w+")
+        update_interval = input()
+        configfile.write(update_interval)
+    except IOError:
+        print("Couldn't save Update Interval")
+    finally:
+        configfile.close()   
+        check_update_interval()
+
+api_url='https://api.ukfast.io/safedns/v1'
+final_record_list = {}
+
+##### Some functions commented out for me to test each one. Don't delete them
+#api_key_load()
+#select_records()
+check_update_interval()
 
 
+# TO - DO
+# Check the Update Interval is not greater than the domain's TTL
 
 
 # NOTES
