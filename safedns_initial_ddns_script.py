@@ -75,7 +75,7 @@ def select_subdomains(domain):
     def get_label(option): return option.get('name')
     global selected_subdomains
     selected_subdomains = pick(current_subdomain_list, title, multi_select=True, indicator='*', options_map_func=get_label)
-    print(selected_subdomains)
+#    print(selected_subdomains)
     for x in range(len(selected_subdomains)):
         strdata=str(selected_subdomains[x])
         splitdata = strdata.split("'")
@@ -84,10 +84,10 @@ def select_subdomains(domain):
         record_name=splitdata[5]
         record_type=splitdata[9]
         record_list=[record_id,record_name,record_type]
-        print("ID "+record_id)
-        print("Name "+record_name)
-        print("Type "+record_type)
-        print("List "+str(record_list))
+#        print("ID "+record_id)
+#        print("Name "+record_name)
+#        print("Type "+record_type)
+#        print("List "+str(record_list))
         final_record_list[x] = [record_list]
 
 
@@ -143,6 +143,7 @@ def main_menu():
         api_key_write()
     elif selected[1] == 2:
 #        print("3- Set Records")
+        api_key_
         select_records()
     elif selected[1] == 3:
 #        print("4- Set Update Freqency")
@@ -151,39 +152,37 @@ def main_menu():
 #        print("5- Exit")
         sys.exit(0)
 
-#api_url='https://api.ukfast.io/safedns/v1'
-#final_record_list = {}
-#main_menu()
+api_url='https://api.ukfast.io/safedns/v1'
+final_record_list = {}
 
 def confirm_ttl(domain_x):
     domain_y=str(re.findall("\.([a-z\.]+)*$", domain_x))
     domain=domain_y.strip("[ , ] , '")
-    print("DOMAIN: "+domain)
     response = dns.resolver.query(domain, 'SOA')
     if response.rrset is not None:
         domain_soa_ttl_x = str(re.findall("[0-9]+$", str(response.rrset)))
         domain_soa_ttl = domain_soa_ttl_x.strip("[ , ] , '")
-        if domain_soa_ttl > update_interval:
-            print("Domain "+domain+"'s SOA TTL ("+domain_soa_ttl+") is higher than your update frequency("+update_interval+")")
+        if int(domain_soa_ttl) > int(update_interval):
+            print("Domain "+domain+"'s SOA TTL ("+domain_soa_ttl+") is higher than your specified update frequency("+update_interval+")")
             print("This will cause delays in propegation. Change your domain's TTL for optimum results")
 
 
+api_key_load()
+select_records()
+check_update_interval()
+print(final_record_list)
+for x in final_record_list:
+    entry=str(final_record_list[x]).split("'")
+    print("NAME:"+str(entry[3]))
+    confirm_ttl(str(entry[3]))
 
-#    print("Checking TTL for domain : "+domain)
-#    dnsquery = dns.resolver.query(domain,'NS')
-#    print("Nameservers")
-##    for nameserver in dnsquery:
-##        print("Nameserver: "+str(nameserver))
-##
-##        xres = dns.resolver.Resolver(configure=False)
-##        xres.nameservers = [ str(nameserver) ]
-##        xresolve = xres.query('gwin.cloud.chrotek.co.uk')#, 'a')    
-##        print("xresolve: "+str(xresolve))
+
+
 write_update_interval() 
 #confirm_ttl("cloud.chrotek.co.uk")
 #confirm_ttl("chrotek.co.uk")
 confirm_ttl("gwin.cloud.chrotek.co.uk")
-
+#main_menu()
 sys.exit(0)
 
 
