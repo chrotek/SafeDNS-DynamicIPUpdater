@@ -8,12 +8,15 @@ import requests
 from pick import pick 
 import ast
 import signal
+import dns.resolver
+import re
+# from pprint import pprint
 
 def handler(signum, frame):
     print ('Exiting on User Instruction')
     global exitbool
     exitbool=True
-    exit(0)
+    exit(130)
 
 global exitbool
 exitbool=False
@@ -22,7 +25,13 @@ signal.signal(signal.SIGINT, handler)
 def api_key_write():
     try:
         configfile = open("config/apikey","w+")
+        print("Please enter API Key, and press enter.  CTRL + C to quit")
         api_key = input()
+        if api_key == 'quit':
+            print("You typed QUIT!!")
+            exitbool=True
+            sys.exit(0)
+
         configfile.write(api_key)
     except IOError:
         print("Couldn't save API Key")
@@ -46,11 +55,11 @@ def api_key_load():
     }
     response=requests.get('https://api.ukfast.io/safedns/v1/zones', headers=api_token)
     if response.status_code == 401:
-        print("API Key Invalid! Please enter a new one and press enter:")
+        print("API Key Invalid!")
         if exitbool == True:
-            exit(0)
+            exit(130)
         api_key_write()
-        api_key_load()
+#        api_key_load()
 
 def select_domains():
     domain_list = json.loads(json.dumps(requests.get(api_url+"/zones", headers=api_token).json()['data']))
@@ -95,39 +104,92 @@ def select_records():
     configfile.close()
 
 def check_update_interval():
+    global update_interval
     try:
         configfile = open("config/update_interval","r")
     except IOError:
-        print("Couldn't read Update Interval. Please input a value in minutes and press enter")
+        print("Couldn't read Update Interval.")
         write_update_interval()
     finally:
         with open('config/update_interval', 'r') as file:
             update_interval = file.read().replace('\n', '')
-            print("UpdateInterval "+update_interval)
+#            print("UpdateInterval "+update_interval)
 
 def write_update_interval():
     try:
         configfile = open("config/update_interval","w+")
+        print("How frequently do you want to update your records (in seconds)")
         update_interval = input()
         configfile.write(update_interval)
     except IOError:
         print("Couldn't save Update Interval")
+        write_update_interval()
     finally:
         configfile.close()   
         check_update_interval()
 
-api_url='https://api.ukfast.io/safedns/v1'
-final_record_list = {}
+def main_menu():
 
-##### Some functions commented out for me to test each one. Don't delete them
-#api_key_load()
-#select_records()
-check_update_interval()
+    title = 'Choose an option (press SPACE to mark, ENTER to continue): '
+    options = ['Full configuration','Set API Key','Set Records','Set Update Freqency','Exit']
+    selected = pick(options, title, min_selection_count=1)
+    if selected[1] == 0:
+#        print("1- Full config")
+        api_key_write()
+        select_records()
+        write_update_interval()
+    elif selected[1] == 1:
+#        print("2- Set API Key")
+        api_key_write()
+    elif selected[1] == 2:
+#        print("3- Set Records")
+        select_records()
+    elif selected[1] == 3:
+#        print("4- Set Update Freqency")
+        write_update_interval()
+    elif selected[1] == 4:
+#        print("5- Exit")
+        sys.exit(0)
+
+#api_url='https://api.ukfast.io/safedns/v1'
+#final_record_list = {}
+#main_menu()
+
+def confirm_ttl(domain_x):
+    domain_y=str(re.findall("\.([a-z\.]+)*$", domain_x))
+    domain=domain_y.strip("[ , ] , '")
+    print("DOMAIN: "+domain)
+    response = dns.resolver.query(domain, 'SOA')
+    if response.rrset is not None:
+        domain_soa_ttl_x = str(re.findall("[0-9]+$", str(response.rrset)))
+        domain_soa_ttl = domain_soa_ttl_x.strip("[ , ] , '")
+        if domain_soa_ttl > update_interval:
+            print("Domain "+domain+"'s SOA TTL ("+domain_soa_ttl+") is higher than your update frequency("+update_interval+")")
+            print("This will cause delays in propegation. Change your domain's TTL for optimum results")
+
+
+
+#    print("Checking TTL for domain : "+domain)
+#    dnsquery = dns.resolver.query(domain,'NS')
+#    print("Nameservers")
+##    for nameserver in dnsquery:
+##        print("Nameserver: "+str(nameserver))
+##
+##        xres = dns.resolver.Resolver(configure=False)
+##        xres.nameservers = [ str(nameserver) ]
+##        xresolve = xres.query('gwin.cloud.chrotek.co.uk')#, 'a')    
+##        print("xresolve: "+str(xresolve))
+write_update_interval() 
+#confirm_ttl("cloud.chrotek.co.uk")
+#confirm_ttl("chrotek.co.uk")
+confirm_ttl("gwin.cloud.chrotek.co.uk")
+
+sys.exit(0)
 
 
 # TO - DO
-# Check the Update Interval is not greater than the domain's TTL
-
+# - Check the Update Interval is not greater than the domain's TTL
+# - Add record type to menu when selecting records
 
 # NOTES
 #
