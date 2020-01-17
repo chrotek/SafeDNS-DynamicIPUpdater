@@ -50,6 +50,8 @@ def api_key_load():
     finally:
         with open('config/apikey', 'r') as file:
             api_key = file.read().replace('\n', '')
+            global api_key_loaded
+            api_key_loaded = True
     api_token= {
         'Authorization': api_key,
     }
@@ -89,9 +91,14 @@ def select_subdomains(domain):
 #        print("Type "+record_type)
 #        print("List "+str(record_list))
         final_record_list[x] = [record_list]
-
+        global selected_records_loaded
+        selected_records_loaded = True 
 
 def select_records():
+    if api_key_loaded is not True:
+        print("You need to load the API Key first")
+        api_key_load()
+
     for domaindata in (select_domains()):
         str_domain_data = str(domaindata)
         split_domain_data = str_domain_data.split("'")
@@ -113,6 +120,8 @@ def check_update_interval():
     finally:
         with open('config/update_interval', 'r') as file:
             update_interval = file.read().replace('\n', '')
+            global update_interval_loaded
+            update_interval_loaded = True
 #            print("UpdateInterval "+update_interval)
 
 def write_update_interval():
@@ -128,34 +137,10 @@ def write_update_interval():
         configfile.close()   
         check_update_interval()
 
-def main_menu():
-
-    title = 'Choose an option (press SPACE to mark, ENTER to continue): '
-    options = ['Full configuration','Set API Key','Set Records','Set Update Freqency','Exit']
-    selected = pick(options, title, min_selection_count=1)
-    if selected[1] == 0:
-#        print("1- Full config")
-        api_key_write()
-        select_records()
-        write_update_interval()
-    elif selected[1] == 1:
-#        print("2- Set API Key")
-        api_key_write()
-    elif selected[1] == 2:
-#        print("3- Set Records")
-        api_key_
-        select_records()
-    elif selected[1] == 3:
-#        print("4- Set Update Freqency")
-        write_update_interval()
-    elif selected[1] == 4:
-#        print("5- Exit")
-        sys.exit(0)
-
-api_url='https://api.ukfast.io/safedns/v1'
-final_record_list = {}
-
 def confirm_ttl(domain_x):
+    if selected_records_loaded is not True:
+        print("You need to select some records")
+        select_records()
     domain_y=str(re.findall("\.([a-z\.]+)*$", domain_x))
     domain=domain_y.strip("[ , ] , '")
     response = dns.resolver.query(domain, 'SOA')
@@ -167,8 +152,64 @@ def confirm_ttl(domain_x):
             print("This will cause delays in propegation. Change your domain's TTL for optimum results")
 
 
-api_key_load()
-select_records()
+def main_menu():
+
+    title = 'Choose an option (press SPACE to mark, ENTER to continue): '
+    options = ['Full configuration','Set API Key','Set Records','Set Update Freqency','Exit']
+    selected = pick(options, title, min_selection_count=1)
+    if selected[1] == 0:
+#       print("1- Full config")
+        api_key_load()
+        select_records()
+        write_update_interval()
+        main_menu()
+    elif selected[1] == 1:
+#       print("2- Set API Key")
+        api_key_write()
+        main_menu()
+    elif selected[1] == 2:
+#       print("3- Set Records")
+        select_records()
+        main_menu()
+    elif selected[1] == 3:
+#        print("4- Set Update Freqency")
+        write_update_interval()
+        main_menu()
+    elif selected[1] == 4:
+#        print("5- Exit")
+        sys.exit(0)
+
+api_url='https://api.ukfast.io/safedns/v1'
+api_key_loaded = False
+selected_records_loaded = False
+update_interval_loaded = False
+final_record_list = {}
+main_menu()
+#def confirm_ttl(domain_x):
+#    if selected_records_loaded is not True:
+#        print("You need to select some records")
+#        select_records()
+#    domain_y=str(re.findall("\.([a-z\.]+)*$", domain_x))
+#    domain=domain_y.strip("[ , ] , '")
+#    response = dns.resolver.query(domain, 'SOA')
+#    if response.rrset is not None:
+#        domain_soa_ttl_x = str(re.findall("[0-9]+$", str(response.rrset)))
+#        domain_soa_ttl = domain_soa_ttl_x.strip("[ , ] , '")
+#        if int(domain_soa_ttl) > int(update_interval):
+#            print("Domain "+domain+"'s SOA TTL ("+domain_soa_ttl+") is higher than your specified update frequency("+update_interval+")")
+#            print("This will cause delays in propegation. Change your domain's TTL for optimum results")
+
+sys.exit(0)
+
+
+
+
+
+
+
+
+#api_key_load()
+#select_records()
 check_update_interval()
 print(final_record_list)
 for x in final_record_list:
@@ -178,7 +219,7 @@ for x in final_record_list:
 
 
 
-write_update_interval() 
+#write_update_interval() 
 #confirm_ttl("cloud.chrotek.co.uk")
 #confirm_ttl("chrotek.co.uk")
 confirm_ttl("gwin.cloud.chrotek.co.uk")
