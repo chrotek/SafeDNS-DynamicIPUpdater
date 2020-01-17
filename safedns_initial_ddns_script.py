@@ -122,7 +122,7 @@ def check_update_interval():
             update_interval = file.read().replace('\n', '')
             global update_interval_loaded
             update_interval_loaded = True
-#            print("UpdateInterval "+update_interval)
+#   i         print("UpdateInterval "+update_interval)
 
 def write_update_interval():
     try:
@@ -151,6 +151,13 @@ def confirm_ttl(domain_x):
             print("Domain "+domain+"'s SOA TTL ("+domain_soa_ttl+") is higher than your specified update frequency("+update_interval+")")
             print("This will cause delays in propegation. Change your domain's TTL for optimum results")
 
+def confirm_selected_ttl():
+    for x in final_record_list:
+        entry=str(final_record_list[x]).split("'")
+        print("NAME:"+str(entry[3]))
+        confirm_ttl(str(entry[3]))
+
+
 
 def main_menu():
 
@@ -162,6 +169,7 @@ def main_menu():
         api_key_load()
         select_records()
         write_update_interval()
+        confirm_selected_ttl()
         main_menu()
     elif selected[1] == 1:
 #       print("2- Set API Key")
@@ -174,6 +182,7 @@ def main_menu():
     elif selected[1] == 3:
 #        print("4- Set Update Freqency")
         write_update_interval()
+        confirm_selected_ttl()
         main_menu()
     elif selected[1] == 4:
 #        print("5- Exit")
