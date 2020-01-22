@@ -14,12 +14,31 @@ import re
 import configparser
 from datetime import datetime
 
+try:
+    with open('config.ini') as f:
+        configfiletest = f.readlines()
+        configfiletest_api=False
+        configfiletest_rec=False
+        for line in configfiletest:
+            if "[API]" in line:
+                configfiletest_api=True
+            if "[RECORDS]" in line:
+                configfiletest_rec=True
+        if configfiletest_rec == False or configfiletest_api == False:
+            print("Invalid config.ini file! Please run configuration script")
+            sys.exit(1)
+except FileNotFoundError:
+    print("config.ini missing! Please run configuration script")
+    sys.exit(1)
+
 config = configparser.ConfigParser()
+config['API'] = {}
 
+config['API']['key'] = 'null'
 api_url='https://api.ukfast.io/safedns/v1'
-
 now = datetime.now()
 final_record_list = {}
+update_interval = 'null'
 api_key_loaded = False
 selected_records_loaded = False
 update_interval_loaded = False
@@ -75,7 +94,7 @@ def loop_over_records_template():
         print("ID: "+record_id+" Name: "+record_name+" Type: "+record_type)
 
 
-def loopdomains():
+def check_ips_and_update_records():
     records_to_update=[]
     for x in final_record_list:
         record=str(final_record_list[x]).split(",")
@@ -109,9 +128,25 @@ def loopdomains():
     if record_needs_update == False:
         print("All domains already have our current IP, So no updates nescessary")
 
+def check_update_interval():
+    global update_interval
+    global update_interval_loaded
+    config.read('config.ini')
+    update_interval=config['API']['update_interval']
+    if(update_interval=='null'):
+        print ("No Update frequency specified, Please run configuration script")
+        sys.exit(0)
+    update_interval_loaded = True
 
-print("Running Checks at "+now.strftime("%H:%M:%S")+" On "+now.strftime("%d/%m/%Y"))
-api_key_load()
-load_records_config()
-loopdomains()
-print("------------------------------------------------------------------------")
+check_update_interval()
+print(str(update_interval))
+while True:
+    now = datetime.now()
+    print("Running Checks at "+now.strftime("%H:%M:%S")+" On "+now.strftime("%d/%m/%Y"))
+    api_key_load()
+    load_records_config()
+    if len(final_record_list)==0:
+        print("No records in config file! Please run configuration script and set some domains")
+        sys.exit(1)
+    check_ips_and_update_records()
+    time.sleep(int(update_interval))
