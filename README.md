@@ -16,6 +16,8 @@ We will need:
 
 #### Get an API Key
 
+<details>
+
 ##### Create a New API Application
 
 - Log into your [MyUKFast Account](my.ukfast.co.uk)
@@ -33,4 +35,5 @@ We will need:
 - Change SafeDNS to Read/Write
 - Click Update Permissions
 
+</details>
 Clone the repo, set up or alter config etc etc
