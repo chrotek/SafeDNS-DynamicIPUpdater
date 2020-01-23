@@ -1,20 +1,11 @@
 # SafeDNS-DynamicIPUpdater
 Dynamic DNS Updater for SafeDNS , using the API
 
-
-### Project Notes
-
-We will need:
-- A config file with the following information:
-  - Full hostnames
-  - API Keys
-  - How often to check & update IP
-
 ## README
 
 ### Setup Instructions
 
-#### Get an API Key
+#### How to get an API Key
 
 <details>
 
@@ -37,5 +28,9 @@ We will need:
 
 </details>
 
+#### Installation
+- Clone this repo:
 
-Clone the repo, set up or alter config etc etc
+    xyz
+
+set up or alter config etc etc
