@@ -14,6 +14,23 @@ import re
 import configparser
 from datetime import datetime
 
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("safedns-ddns-updater.log", "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)  
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        pass    
+
+sys.stdout = Logger()
+
 try:
     with open('config.ini') as f:
         configfiletest = f.readlines()
@@ -91,7 +108,7 @@ def loop_over_records_template():
         record_id=record[0].strip("[,'")
         record_name=record[1].replace("'","")
         record_type=record[2].replace("'","").replace("]","")
-        print("ID: "+record_id+" Name: "+record_name+" Type: "+record_type)
+#        print("ID: "+record_id+" Name: "+record_name+" Type: "+record_type)
 
 
 def check_ips_and_update_records():
@@ -139,7 +156,7 @@ def check_update_interval():
     update_interval_loaded = True
 
 check_update_interval()
-print(str(update_interval))
+#print(str(update_interval))
 while True:
     now = datetime.now()
     print("Running Checks at "+now.strftime("%H:%M:%S")+" On "+now.strftime("%d/%m/%Y"))

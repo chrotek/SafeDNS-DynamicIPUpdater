@@ -4,3 +4,8 @@ services:
     build:
       context: ./safedns-ddns-updater
     restart: unless-stopped
+    volumes:
+      - ./safedns-ddns-updater/safedns-ddns-configuration.py:/safedns-ddns-configuration.py
+      - ./safedns-ddns-updater/safedns-ddns-updater.py:/safedns-ddns-updater.py
+      - ./safedns-ddns-updater/config.ini:/config.ini
+      - ./safedns-ddns-updater/safedns-ddns-updater.log:/safedns-ddns-updater.log
