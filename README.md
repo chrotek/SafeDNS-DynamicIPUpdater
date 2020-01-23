@@ -31,6 +31,6 @@ Dynamic DNS Updater for SafeDNS , using the API
 #### Installation
 - Clone this repo:
 
-    xyz
+        xyz
 
 set up or alter config etc etc
