@@ -14,7 +14,8 @@ We will need:
 
 ### Setup Instructions
 
-#### Create a New API Application
+#### Get an API Key
+##### Create a New API Application
 - Log into your [MyUKFast Account](my.ukfast.co.uk)
 - Go to API Applications
 - Click "Register your Application"
@@ -24,7 +25,7 @@ We will need:
 - Click "Register Application"
 - Copy the API Token to a safe place <br> ( You won't be able to get a reminder of this later, but you can reset it and get a new token if needed )
 
-#### Set Access Levels for API Application
+##### Set Access Levels for API Application
 - In API Applications, Click the Application
 - Click the API Acces tab
 - Change SafeDNS to Read/Write
