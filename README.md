@@ -16,7 +16,9 @@ We will need:
 
 #### Get an API Key
 
-* Create a New API Application *
+
+**Create a New API Application **
+
 
 - Log into your [MyUKFast Account](my.ukfast.co.uk)
 - Go to API Applications
