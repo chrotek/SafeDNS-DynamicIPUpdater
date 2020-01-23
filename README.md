@@ -14,7 +14,7 @@ We will need:
 
 ### Setup Instructions
 
-##### Get an API Key
+### Get an API Key
 
 **Create a New API Application**
 
