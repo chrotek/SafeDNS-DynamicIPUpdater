@@ -1,6 +1,8 @@
 # SafeDNS-DynamicIPUpdater
 Dynamic DNS Updater for SafeDNS , using the API
 
+** Documentation not finished yet. Any issues or questions, speak to me **
+
 ## README
 
 ### Setup Instructions
